@@ -166,7 +166,7 @@ def download_omni_text(input_datetime):
 
 
 	dataframe['Clock Angle - 0min [deg]'] = clock_angle_data
-	dataframe['Clock Angle - 15min [deg]'] = clock_angle_data_15
+	dataframe['Clock Angle - 15min [deg]'] = clock_angle_15
 	dataframe['Clock Angle - 30min [deg]'] = clock_angle_30
 
 	dataframe['Newell CF - 0min [m/s^(4/3) T^(2/3)]'] = newell_data
@@ -190,6 +190,7 @@ def download_omni_text(input_datetime):
 
 	filepath = './'
 	filename = filepath + 'solardata' + input_datetime.strftime('%Y') + '_' +input_datetime.strftime('%j') + '.csv'
+	print('output solardata file location = {}'.format(filename))
 	dataframe_nan.to_csv(filename, index_label = 'Datetime')
 
 
@@ -200,16 +201,18 @@ def main():
 
 	#for year 2015
 	t_start = datetime.datetime(2015,1,1)
-	dates_to_get = [t_start + datetime.timedelta(d) for d in range(365)]
+	dates_to_get = [t_start + datetime.timedelta(d) for d in range(2)]
 	for i in range(0, len(dates_to_get)):
 		try:
 			download_omni_text(dates_to_get[i])
-		except:
+		except Exception as e:
+			print('Exception = {}'.format(e))
+
 			data_to_write = [str(dates_to_get[i])]
 			with open('./failed_file.txt', 'a') as outfile:
 				writer = csv.writer(outfile)
-				writer.writerow(str(data_to_write)
+				writer.writerow(str(data_to_write))
 				#saves dates that didnt get downloaded.
 
-if __name__=='__main__':
-	main()
+if __name__=="__main__":
+    main()
