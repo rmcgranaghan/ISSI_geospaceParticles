@@ -4,5 +4,5 @@ Development for ISSI 2019 project -- Novel approaches to multiscale geospace par
 ## Contents
 - download_solar.py
    - Dependencies: 
-       - [geospacepy](https://github.com/lkilcommons/geospacepy-lite)
-       - [sunpy](https://sunpy.org/)
+       - <a href="https://github.com/lkilcommons/geospacepy-lite" target="_blank">geospacepy</a>
+       - <a href="https://sunpy.org/" target="_blank">sunpy</a>
