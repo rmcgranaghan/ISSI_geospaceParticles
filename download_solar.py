@@ -188,7 +188,7 @@ def download_omni_text(input_datetime):
 	dataframe['GOES X-ray Wm^-2'] = goes_data
 	dataframe_nan = dataframe.replace(9999.99, np.nan) #replace 9999.99 with nans
 
-	filepath = './'
+	filepath = '/Users/ryanmcgranaghan/Documents/Conferences/ISSI_2018/ISSI_geospaceParticles/solar_data/'
 	filename = filepath + 'solardata' + input_datetime.strftime('%Y') + '_' +input_datetime.strftime('%j') + '.csv'
 	print('output solardata file location = {}'.format(filename))
 	dataframe_nan.to_csv(filename, index_label = 'Datetime')
@@ -200,8 +200,8 @@ def main():
 	print('REQUIRED: change the save directory')
 
 	#for year 2015
-	t_start = datetime.datetime(2015,1,1)
-	dates_to_get = [t_start + datetime.timedelta(d) for d in range(2)]
+	t_start = datetime.datetime(2010,3,1)
+	dates_to_get = [t_start + datetime.timedelta(d) for d in range(365)]
 	for i in range(0, len(dates_to_get)):
 		try:
 			download_omni_text(dates_to_get[i])
