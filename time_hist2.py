@@ -121,5 +121,6 @@ def time_history(data):
                       t_hist(data,45,0).instant_hist(),
                       t_hist(data,30,0).instant_hist(),
                       t_hist(data,15,0).instant_hist(),
-                      t_hist(data,10,0).instant_hist()),axis=1)
+                      t_hist(data,10,0).instant_hist(),
+                      t_hist(data,5,0).instant_hist()),axis=1)
 
