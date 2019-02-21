@@ -123,14 +123,3 @@ def time_history(data):
                       t_hist(data,15,0).instant_hist(),
                       t_hist(data,10,0).instant_hist()),axis=1)
 
-
-# In[4]:
-
-
-omni_df = pd.read_pickle('omni_data.pkl')
-omni_df = omni_df.resample('5T').pad()
-omni_df = omni_df[datetime(2010,1,1):datetime(2011,1,1)]
-get_ipython().run_line_magic('timeit', "time_history(omni_df[['Bz GSM','By GSM']][:100])")
-# fn_1 = hist10min(omni_df[['Bz GSM','By GSM']][:100])
-# cl1 = t_hist(omni_df[['Bz GSM','By GSM']][:100],10,30).instant_hist()
-
