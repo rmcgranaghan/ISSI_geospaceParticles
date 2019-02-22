@@ -17,5 +17,5 @@ header = [header {'sin piLTIME12'} {'cos piLTIME12'} {'LAT'}];
 header = header';
 
 %%
-% save('header_dmspX', 'header')
+save('header_dmspX', 'header')
 
