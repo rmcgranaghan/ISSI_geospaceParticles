@@ -18,6 +18,7 @@ load omni_2010.mat
 
 el_avg_energy = [];
 el_total_flux = [];
+sat_number = [];
 
 % loop over spacecraftNumber
 
@@ -79,6 +80,8 @@ for ID_ind = ID_unique'
    tmp = ELE_TOTAL_ENERGY_FLUX(this_sc);
    el_total_flux = [el_total_flux; tmp];
    
+   tmp = ID_sc(this_sc);
+   sat_number = [sat_number; tmp];
 
 %ELE_AVG_ENERGY = ELE_AVG_ENERGY(360:end);
 %ELET_OTAL_ENERGY_FLUX = ELE_TOTAL_ENERGY_FLUX(360:end);
@@ -91,20 +94,21 @@ end
 X(I,:)=[];
 el_avg_energy(I)=[];
 el_total_flux(I)=[];
+sat_number(I) = [];
 
 f=find(isnan(el_avg_energy));
 el_avg_energy(f)=[];
 el_total_flux(f)=[];
+sat_number(f) = [];
 X(f,:)=[];
 
 f=find(isnan(el_total_flux));
 el_avg_energy(f)=[];
 el_total_flux(f)=[];
+sat_number(f) = [];
 X(f,:)=[];
 
-
-
-save dmsp_omni.mat X T el_avg_energy el_total_flux LAT LTIME doy_omni_1min
+save dmsp_omni.mat X T el_avg_energy el_total_flux LAT LTIME doy_omni_1min sat_number
 
 
 
