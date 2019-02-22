@@ -1,1 +1,3 @@
 *.mat
+*~
+MATLAB/visualisation_tools/figs
