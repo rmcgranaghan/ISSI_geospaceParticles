@@ -19,7 +19,7 @@ class t_hist():
     
     Input:
         Data ---------- A DataFrame of solar wind data at 5 minute
-                        cadence.
+                        cadence and datetime index.
         Historic_time - The number of minutes into the past you
                         would like the hisotry for. (E.g. for 1hr ago
                         you would input 60 minutes).
@@ -40,13 +40,18 @@ class t_hist():
         Output:
             - A dataframe of values of the time history.
         '''
+        # Check that indices are datetime
+        self.is_datetime()
+        
         if self.time % 60:
             raise ValueError('Please choose a historic time value '+
                              'which correspond to an integer '+
                              'number of hours!')
         
         window_s = timedelta(minutes = self.time + self.window/2.0)
-        window_e = timedelta(minutes = self.time - self.window/2.0)
+        # '+5' ensures that the window is closed on the right
+        window_e = timedelta(minutes = self.time + 5 -
+                             self.window/2.0)
         indices = self.data.index
         
         hist = [self.data[i-window_s : i-window_e].mean().values
@@ -67,10 +72,14 @@ class t_hist():
             - A dataframe of instantaneous values corresponding to
               historic_time minutes in the past.
         '''
+        # Check that indices are datetime
+        self.is_datetime()
+        
         if self.time % 5:
             raise ValueError('Please choose a historic time value '+
                              'which correspond to a multiple of 5 '+
                              'minutes!')
+            
         t_offset = timedelta(minutes=self.time)
         indices = self.data.index
         
@@ -79,12 +88,24 @@ class t_hist():
                  if i >= indices[0]+t_offset]
         
         if self.time < 60:
-            col_label = '_'+str(self.time)[0]+'min'
+            if self.time >= 10:
+                col_label = '_'+str(self.time)[0:2]+'min'
+            else:
+                col_label = '_'+str(self.time)[0]+'min'
         else:
             col_label = '_'+str(self.time/60.0)[0]+'hr_I'
         columns = [i+col_label for i in self.data.columns]
         return pd.DataFrame(hist, index=indices[int(self.time/5):],
                             columns=columns)
+    
+    def is_datetime(self):
+        dt_type = pd.core.indexes.datetimes.DatetimeIndex
+        if type(self.data.index) != dt_type:
+            raise ValueError('Dataframe index is not '+
+                             'in the correct datetime '+
+                             'format')
+        else:
+            pass
 
 
 # In[3]:
@@ -99,7 +120,9 @@ def time_history(data):
     specified.
     
     Input:
-    data - a Pandas DataFrame containing data.
+    data - a Pandas DataFrame containing 5 minute cadence
+           data.
+           MUST HAVE DATETIME INDEX.
     
     Output:
     A concatenated DataFrame containing
@@ -112,6 +135,7 @@ def time_history(data):
         - t-30min (instant)
         - t-15min (instant)
         - t-10min (instant)
+        - t-5min (instant)
     '''
     return pd.concat((data,
                       t_hist(data,360,60).avg_hist(),
