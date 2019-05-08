@@ -205,7 +205,7 @@ def check_trash(trash_data):
 
 # In[4]:
 
-def time_history(data):
+def time_history(data,auto=True):
     '''
     Function which calculates time history information
     given an input dataframe.
@@ -217,6 +217,13 @@ def time_history(data):
     data - a Pandas DataFrame containing 5 minute cadence
            data.
            MUST HAVE DATETIME INDEX.
+    auto - Whether or not to automatically clean the data.
+           If not True, then the cleaning_data() and
+           sw_interp() functions must be called individually
+           and the results of sw_interp() should be the data
+           fed to this function, time_history(). Set to false
+           to retrieve the non-interpolated data and the trash
+           data.
     
     Output:
     A concatenated DataFrame containing
@@ -231,6 +238,14 @@ def time_history(data):
         - t-10min (instant)
         - t-5min (instant)
     '''
+    if auto is True:
+        c_data,t_data = cleaning_data(data,sigma_val=4,
+                                  safe_cols=[None])
+        c_i_data = sw_interp(c_data,method='linear')
+        
+        data = c_i_data
+    else:
+        pass
     return pd.concat((data,
                       t_hist(data,360,60).avg_hist(),
                       t_hist(data,300,60).avg_hist(),
@@ -241,4 +256,3 @@ def time_history(data):
                       t_hist(data,15,0).instant_hist(),
                       t_hist(data,10,0).instant_hist(),
                       t_hist(data,5,0).instant_hist()),axis=1)
-
