@@ -110,6 +110,100 @@ class t_hist():
 
 # In[3]:
 
+def cleaning_data(data,safe_cols=[],sigma_val=4):
+    '''
+    Function which removes data which is 'sigma_val' stdevs from
+    the mean.
+
+    Note: 4 sigma encompasses ~99.994% of the data.
+          ~1 real piece of 5 min data is removed for
+          every 55 days of such data (assuming Gaussian).
+
+    Inputs:
+    sigma_val - (float) number of standard deviations from the
+                mean to consider as the limit of 'good' data.
+    safe_cols - Columns in the data which one might like to
+                keep without any changes (i.e., if there are
+                no null values in the initial dataset etc.).
+
+    Returns:
+     - Cleaned solar wind data dataframe.
+     - Dataframe of 'bad' solar wind data.
+    '''
+
+#   Initialising data and empty lists
+    sw_df = data
+    cleaned_cols = []
+    trash_data = []
+#   Looping through dataframe columns and removing 'bad' values
+    for i in sw_df.columns:
+        if i not in safe_cols:
+            std = sw_df[i].std()
+            mean = sw_df[i].mean()
+
+            cleaned = sw_df[i][sw_df[i]<mean+std*sigma_val]
+            trash = sw_df[i][sw_df[i]>=mean+std*sigma_val]
+
+            cleaned_cols.append(cleaned)
+            trash_data.append(trash)
+        else:
+            cleaned_cols.append(sw_df[i])
+            trash_data.append([np.nan])
+#   Initialising empty dataframes and appending data
+    sw_c_df = pd.DataFrame()
+    trash_df = pd.DataFrame()
+
+    for i in range(len(sw_df.columns)):
+#         sw_c_df[sw_df.columns[i]] = cleaned_cols[i]
+#         sw_c_df = sw_c_df
+        sw_c_df_temp = pd.DataFrame(cleaned_cols[i],
+                                 columns=[sw_df.columns[i]])
+        sw_c_df = pd.concat([sw_c_df,sw_c_df_temp], axis=1)
+
+        trash_df_temp = pd.DataFrame(trash_data[i],
+                                     columns=[sw_df.columns[i]])
+        trash_df = pd.concat([trash_df,trash_df_temp], axis=1)
+
+#   Checking if the trash data contains non-'bad' data.
+    check_trash(trash_df)
+    return (sw_c_df, trash_df)
+
+#################################
+
+def sw_interp(data,method='linear'):
+    '''
+    Function which interpolates NaN values in the cleaned
+    data dataframe.
+
+    See Pandas documentation for other methods.
+
+    Input:
+    method - method of interpolation.
+
+    Return:
+     - Cleaned, interpolated data.
+    '''
+    return data.interpolate(method=method)
+
+#################################
+
+def check_trash(trash_data):
+    '''
+    Function which checks to see if all the removed data
+    is the 'bad' data fill value.
+
+    Returns:
+     - String detailing which parameters have had real
+       removed from them.
+    '''
+    for i in trash_data.columns:
+        if (trash_data[i].mean() <
+            trash_data[i].max()):
+            print('Some real data has been removed from: ',i)
+        else:
+            pass
+
+# In[4]:
 
 def time_history(data):
     '''
