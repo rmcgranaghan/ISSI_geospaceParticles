@@ -1,0 +1,17 @@
+
+
+Notes from Téo Bloch (May 8, 2019)
+
+I've editted the time_hist file on github.I've done something similar to what you suggest:
+1. Remove data which is greater than 4 standard deviations from the mean on a per-column basis. Little-to-no data is lost this way, and it means that no one has to go through all the parameters and explicitely write in the specific filler value used for it. Hopefully this should make it more generalised.
+2. Concatenate the columns back together, thus filling in the missing timestamps in various columns with NaNs.
+3. Interpolate the NaNs linearly between the next available data-points.
+4. Feed this cleaned data to the time_history() function.
+
+Each of the functions can be used on their own if someone wishes. But I also coded it so that by default, you still just have to feed it the 5 minute data and the rest is taken care of for you. 
+
+This should mean that you don't need to alter anything in your own code to use the changes.
+
+These changes are slightly different from what you proposed, but I think that they cover the basics. (I haven't addressed data gaps which span significant portions of any of the time-history, instead it's all just being interpolated).
+
+One thing I noticed was that you calculate some parameters before the time-history is calculated (e.g., 'newell' and 'borovsky'), I think that some of the values are possibly calculated using the filler values. It might be better to alter where these are calculated to ensure that it's with the clean data. Though, at the same time, so long as the calculated values are greater 4 deviations from their respective mean value, my code will clean them anyway.
