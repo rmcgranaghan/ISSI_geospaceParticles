@@ -3,12 +3,13 @@
 clear all
 % pick your time !
 year = 2010;
-doy = 20;
+doy = 340;
 hour=2;
 minute=10;
 my_time = datenum(year,0,doy,hour,minute,0);
 
 load dmsp_omni.mat
+load net_test_1.mat  y_mean y_std
 
 f=find(my_time==T);
 f=f(1);
@@ -20,7 +21,9 @@ Nmlt=51;
 d_angle=2*pi/(Nmlt-1);
 
 l=linspace(45,90,Nl);
-mlt = 0:d_angle:2*pi;
+mlt = pi*linspace(5,20,Nmlt)/12;
+%mlt = 0:d_angle:2*pi;
+
 
 [L_grid MLT_grid]=meshgrid(l,mlt);
 
@@ -34,7 +37,7 @@ for i=1:Nl
 
 %        vec = [L_grid(j,i); sin(MLT_grid(j,i)+pi); cos(MLT_grid(j,i)+pi); 0; M(:,time)];
        % el(j,i,time) = den2d_themis(vec);
-         pp(j,i) = net_test_1(vec'); 
+         pp(j,i) = (net_test_1(vec').*y_std)+y_mean; 
     end
 end
 
